@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "breakerledger"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Compile breaker test observations into an evidence-backed panel directory and retest queue"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -44,3 +44,5 @@ Issues = "https://github.com/KanadeK/breakerledger/issues"
 [tool.hatch.build.targets.wheel]
 packages = ["src/breakerledger"]
 
+[tool.hatch.version]
+path = "src/breakerledger/__init__.py"
