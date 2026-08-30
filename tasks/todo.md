@@ -53,6 +53,6 @@ Files: `tests/test_cli.py`, `src/breakerledger/cli.py`,
 - [x] Add Windows/Linux CI and tagged release automation.
 - [x] Build and install wheel/sdist in a clean environment.
 - [x] Complete five-axis review and secret scan.
-- [ ] Complete author/contributor audit on the release commit.
+- [x] Complete author/contributor audit on the release commit.
 - [ ] Publish public repository and v0.1.0 Release; verify online artifacts.
 - [ ] Send Gmail completion message only after public verification.

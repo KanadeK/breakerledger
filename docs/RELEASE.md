@@ -6,9 +6,9 @@
 - [x] `uv run python scripts/check.py`
 - [x] `uv build`
 - [x] `uv run python scripts/verify_package.py`
-- [ ] Clean worktree; staged diff contains no secrets.
-- [ ] `git shortlog -sne HEAD` lists only intended contributors.
-- [ ] No `Co-authored-by` trailers unless factually required.
+- [x] Clean worktree; staged diff contains no secrets.
+- [x] `git shortlog -sne HEAD` lists only intended contributors.
+- [x] No `Co-authored-by` trailers unless factually required.
 - [x] Version in `src/breakerledger/__init__.py` matches the planned tag.
 
 ## Public gate
