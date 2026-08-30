@@ -54,5 +54,7 @@ Files: `tests/test_cli.py`, `src/breakerledger/cli.py`,
 - [x] Build and install wheel/sdist in a clean environment.
 - [x] Complete five-axis review and secret scan.
 - [x] Complete author/contributor audit on the release commit.
-- [ ] Publish public repository and v0.1.0 Release; verify online artifacts.
-- [ ] Send Gmail completion message only after public verification.
+- [x] Publish public repository and v0.1.0 Release; verify online artifacts.
+
+Gmail is deliberately the final out-of-repository action. Its delivery is
+reported in the task handoff rather than recorded through a post-release commit.

@@ -13,13 +13,15 @@
 
 ## Public gate
 
-- [ ] Public repository default branch points to the verified commit.
-- [ ] CI is green for that exact commit on Windows and Linux.
-- [ ] Annotated `v0.1.0` tag points to that commit.
-- [ ] GitHub Release contains the wheel and source archive built from the tag.
-- [ ] Release files install and run the healthy/conflicting examples.
-- [ ] Public contributors list contains only intended contributors.
-- [ ] Gmail notification is sent only after the public links are verified.
+- [x] Public repository default branch points to the verified commit.
+- [x] CI is green for that exact commit on Windows and Linux.
+- [x] Annotated `v0.1.0` tag points to that commit.
+- [x] GitHub Release contains the wheel and source archive built from the tag.
+- [x] Release files install and run the healthy/conflicting examples.
+- [x] Public contributors list contains only intended contributors.
+
+Gmail is deliberately the final out-of-repository action. Its delivery is
+reported in the task handoff rather than recorded through a post-release commit.
 
 ## Rollback
 
