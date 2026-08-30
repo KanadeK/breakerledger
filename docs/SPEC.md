@@ -49,8 +49,9 @@ Exit codes:
 ## Input contract
 
 Every project directory contains UTF-8 CSV files with headers exactly matching
-the required fields below. Extra columns fail fast so misspelled fields cannot
-silently disappear. Blank required values fail validation.
+the fields below. Extra columns fail fast so misspelled fields cannot silently
+disappear. Breaker `rating_amps` and `label`, endpoint `label`, and observation
+`observer` and `note` may be blank; every other field is required.
 
 `breakers.csv`:
 
@@ -78,7 +79,8 @@ observation_id,observed_at,breaker_id,endpoint_id,result,observer,note
 
 IDs are case-sensitive and globally unique within their file. Observations must
 reference declared breakers and endpoints. Each input file is capped at 5 MiB
-and 50,000 data rows.
+and 50,000 data rows. The breaker count multiplied by the endpoint count may
+not exceed 1,000,000 so an unmapped retest matrix remains bounded.
 
 ## Evidence semantics
 
@@ -167,4 +169,3 @@ containers, fallback layers, or compatibility shims are in scope.
 
 None for v0.1. The user explicitly delegated product direction and routine
 release decisions for this project.
-

@@ -13,7 +13,7 @@ shell-command feature.
 
 | Abuse case | Control |
 | --- | --- |
-| Huge CSV consumes memory or makes CI hang. | Reject each file over 5 MiB and more than 50,000 data rows. |
+| Huge CSV consumes memory or makes CI hang. | Reject each file over 5 MiB, more than 50,000 data rows, or a breaker x endpoint matrix over 1,000,000 cells. |
 | Crafted labels inject markup into `report.html`. | Escape every external string and use no JavaScript. |
 | Crafted labels become spreadsheet formulas. | Prefix formula-leading external cells in generated CSV. |
 | Duplicate IDs or typoed headers silently overwrite evidence. | Exact headers and uniqueness checks fail before compilation. |
@@ -27,4 +27,3 @@ shell-command feature.
 BreakerLedger can only reason about the observations supplied. Repeated wrong
 observations can produce a wrong “confirmed” result. The report therefore shows
 evidence counts and source observation IDs and never claims electrical safety.
-
