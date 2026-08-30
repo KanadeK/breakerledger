@@ -6,13 +6,16 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from collections.abc import Sequence
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_ROOT = ROOT / "src"
 
 
-def write_csv(path: Path, header: tuple[str, ...], rows: list[tuple[str, ...]]) -> None:
+def write_csv(
+    path: Path, header: tuple[str, ...], rows: Sequence[tuple[str, ...]]
+) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle, lineterminator="\n")
         writer.writerow(header)
@@ -33,7 +36,7 @@ def write_project(root: Path, mode: str) -> None:
         ("endpoint_id", "location", "kind", "label"),
         [("E01", "Living room", "receptacle", "North wall")],
     )
-    observations = [
+    observations: list[tuple[str, ...]] = [
         (
             "O01",
             "2026-08-30T10:00:00Z",
@@ -103,10 +106,15 @@ class CliTests(unittest.TestCase):
             result = run_cli("validate", str(project))
 
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("Valid project: 2 breakers, 1 endpoints, 2 observations", result.stdout)
+        self.assertIn(
+            "Valid project: 2 breakers, 1 endpoints, 2 observations", result.stdout
+        )
 
     def test_audit_clean_project_writes_reports_and_exits_zero(self) -> None:
-        with tempfile.TemporaryDirectory() as project_dir, tempfile.TemporaryDirectory() as output_dir:
+        with (
+            tempfile.TemporaryDirectory() as project_dir,
+            tempfile.TemporaryDirectory() as output_dir,
+        ):
             project = Path(project_dir)
             output = Path(output_dir)
             write_project(project, "healthy")
@@ -119,7 +127,10 @@ class CliTests(unittest.TestCase):
         self.assertEqual(1, summary["status_counts"]["confirmed"])
 
     def test_audit_conflict_writes_reports_and_exits_two(self) -> None:
-        with tempfile.TemporaryDirectory() as project_dir, tempfile.TemporaryDirectory() as output_dir:
+        with (
+            tempfile.TemporaryDirectory() as project_dir,
+            tempfile.TemporaryDirectory() as output_dir,
+        ):
             project = Path(project_dir)
             output = Path(output_dir)
             write_project(project, "conflict")
@@ -135,7 +146,10 @@ class CliTests(unittest.TestCase):
         self.assertNotIn("Traceback", result.stderr)
 
     def test_fail_on_conflict_allows_tentative_result(self) -> None:
-        with tempfile.TemporaryDirectory() as project_dir, tempfile.TemporaryDirectory() as output_dir:
+        with (
+            tempfile.TemporaryDirectory() as project_dir,
+            tempfile.TemporaryDirectory() as output_dir,
+        ):
             project = Path(project_dir)
             output = Path(output_dir)
             write_project(project, "tentative")
@@ -152,7 +166,9 @@ class CliTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("Audit clean for --fail-on conflict", result.stdout)
 
-    def test_invalid_project_exits_one_without_partial_output_or_traceback(self) -> None:
+    def test_invalid_project_exits_one_without_partial_output_or_traceback(
+        self,
+    ) -> None:
         with tempfile.TemporaryDirectory() as project_dir:
             project = Path(project_dir)
             output = project / "output"
@@ -170,4 +186,3 @@ class CliTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

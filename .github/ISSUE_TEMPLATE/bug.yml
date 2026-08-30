@@ -1,0 +1,33 @@
+name: Bug report
+description: Report reproducible behavior that conflicts with the documented contract
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed behavior
+      description: Include the command, exit code, and error text. Remove private room or device names.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Link the relevant README or SPEC rule when possible.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: BreakerLedger and Python versions
+      placeholder: breakerledger 0.1.0; Python 3.12.6
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Use synthetic CSV data; do not upload a private household inventory.
+    validations:
+      required: true

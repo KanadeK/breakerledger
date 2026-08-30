@@ -3,14 +3,20 @@ from __future__ import annotations
 import unittest
 
 from breakerledger.audit import compile_project
-from breakerledger.model import Breaker, Endpoint, Observation, Project
+from breakerledger.model import (
+    Breaker,
+    Endpoint,
+    Observation,
+    ObservationResult,
+    Project,
+)
 
 
 def observation(
     observation_id: str,
     breaker_id: str,
     endpoint_id: str,
-    result: str,
+    result: ObservationResult,
 ) -> Observation:
     return Observation(
         observation_id=observation_id,
@@ -75,7 +81,9 @@ class CompileProjectTests(unittest.TestCase):
         )
 
         audit = compile_project(project, confirmations=2)
-        result = next(item for item in audit.endpoints if item.endpoint.endpoint_id == "E01")
+        result = next(
+            item for item in audit.endpoints if item.endpoint.endpoint_id == "E01"
+        )
 
         self.assertEqual("conflict", result.status)
         self.assertEqual(("B01",), result.breaker_ids)
@@ -94,7 +102,9 @@ class CompileProjectTests(unittest.TestCase):
         )
 
         audit = compile_project(project, confirmations=2)
-        result = next(item for item in audit.endpoints if item.endpoint.endpoint_id == "E01")
+        result = next(
+            item for item in audit.endpoints if item.endpoint.endpoint_id == "E01"
+        )
 
         self.assertEqual("conflict", result.status)
         self.assertEqual(("B01", "B02"), result.breaker_ids)
@@ -132,4 +142,3 @@ class CompileProjectTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

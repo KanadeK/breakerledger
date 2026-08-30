@@ -67,4 +67,3 @@ class Audit:
     endpoints: tuple[EndpointResult, ...]
     retests: tuple[RetestAction, ...]
     status_counts: dict[str, int]
-

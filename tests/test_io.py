@@ -8,7 +8,6 @@ from unittest.mock import patch
 
 from breakerledger.io import InputError, load_project
 
-
 BREAKERS_HEADER = ("panel_id", "breaker_id", "position", "rating_amps", "label")
 ENDPOINTS_HEADER = ("endpoint_id", "location", "kind", "label")
 OBSERVATIONS_HEADER = (
@@ -81,7 +80,9 @@ class LoadProjectTests(unittest.TestCase):
             project = load_project(root)
 
         self.assertEqual(["B01", "B02"], [item.breaker_id for item in project.breakers])
-        self.assertEqual(["E01", "E02"], [item.endpoint_id for item in project.endpoints])
+        self.assertEqual(
+            ["E01", "E02"], [item.endpoint_id for item in project.endpoints]
+        )
         self.assertEqual(
             ["O01", "O02"], [item.observation_id for item in project.observations]
         )
@@ -101,7 +102,7 @@ class LoadProjectTests(unittest.TestCase):
             write_valid_project(root)
             write_csv(
                 root / "breakers.csv",
-                BREAKERS_HEADER + ("labels",),
+                (*BREAKERS_HEADER, "labels"),
                 [("main", "B01", "1", "15", "", "typo")],
             )
 
@@ -188,7 +189,8 @@ class LoadProjectTests(unittest.TestCase):
 
             with self.assertRaisesRegex(
                 InputError,
-                "observations.csv row 2: result must be lost_power, retained_power, or not_tested",
+                "observations.csv row 2: result must be lost_power, "
+                "retained_power, or not_tested",
             ):
                 load_project(root)
 
@@ -196,7 +198,9 @@ class LoadProjectTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             write_valid_project(root)
-            (root / "endpoints.csv").write_bytes(b"endpoint_id,location,kind,label\n\xff")
+            (root / "endpoints.csv").write_bytes(
+                b"endpoint_id,location,kind,label\n\xff"
+            )
 
             with self.assertRaisesRegex(InputError, "endpoints.csv must be UTF-8"):
                 load_project(root)
@@ -206,31 +210,35 @@ class LoadProjectTests(unittest.TestCase):
             root = Path(temp_dir)
             write_valid_project(root)
 
-            with patch("breakerledger.io.MAX_FILE_BYTES", 10):
-                with self.assertRaisesRegex(InputError, "breakers.csv exceeds 10 bytes"):
-                    load_project(root)
+            with (
+                patch("breakerledger.io.MAX_FILE_BYTES", 10),
+                self.assertRaisesRegex(InputError, "breakers.csv exceeds 10 bytes"),
+            ):
+                load_project(root)
 
     def test_rejects_file_above_row_limit(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             write_valid_project(root)
 
-            with patch("breakerledger.io.MAX_DATA_ROWS", 1):
-                with self.assertRaisesRegex(
-                    InputError, "breakers.csv exceeds 1 data rows"
-                ):
-                    load_project(root)
+            with (
+                patch("breakerledger.io.MAX_DATA_ROWS", 1),
+                self.assertRaisesRegex(InputError, "breakers.csv exceeds 1 data rows"),
+            ):
+                load_project(root)
 
     def test_rejects_unbounded_breaker_endpoint_matrix(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             write_valid_project(root)
 
-            with patch("breakerledger.io.MAX_MAPPING_CELLS", 3):
-                with self.assertRaisesRegex(
+            with (
+                patch("breakerledger.io.MAX_MAPPING_CELLS", 3),
+                self.assertRaisesRegex(
                     InputError, "breaker x endpoint matrix exceeds 3 cells"
-                ):
-                    load_project(root)
+                ),
+            ):
+                load_project(root)
 
 
 if __name__ == "__main__":

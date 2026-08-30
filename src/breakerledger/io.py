@@ -42,9 +42,7 @@ def load_project(project_dir: str | Path) -> Project:
     breakers = _load_breakers(breaker_rows)
     endpoints = _load_endpoints(endpoint_rows)
     if len(breakers) * len(endpoints) > MAX_MAPPING_CELLS:
-        raise InputError(
-            f"breaker x endpoint matrix exceeds {MAX_MAPPING_CELLS} cells"
-        )
+        raise InputError(f"breaker x endpoint matrix exceeds {MAX_MAPPING_CELLS} cells")
     observations = _load_observations(
         observation_rows,
         {item.breaker_id for item in breakers},
@@ -53,9 +51,7 @@ def load_project(project_dir: str | Path) -> Project:
     return Project(
         breakers=tuple(sorted(breakers, key=lambda item: item.breaker_id)),
         endpoints=tuple(sorted(endpoints, key=lambda item: item.endpoint_id)),
-        observations=tuple(
-            sorted(observations, key=lambda item: item.observation_id)
-        ),
+        observations=tuple(sorted(observations, key=lambda item: item.observation_id)),
     )
 
 
@@ -89,7 +85,10 @@ def _read_csv(
         if missing is not None:
             raise InputError(f"{path.name} row {row_number}: {missing} is missing")
         rows.append(
-            (row_number, {key: cast(str, value).strip() for key, value in raw_row.items()})
+            (
+                row_number,
+                {key: cast(str, value).strip() for key, value in raw_row.items()},
+            )
         )
     return rows
 
@@ -102,7 +101,9 @@ def _load_breakers(rows: list[tuple[int, dict[str, str]]]) -> list[Breaker]:
         _require("breakers.csv", row_number, row, required)
         breaker_id = row["breaker_id"]
         if breaker_id in seen:
-            raise InputError(f"breakers.csv row {row_number}: duplicate breaker_id {breaker_id}")
+            raise InputError(
+                f"breakers.csv row {row_number}: duplicate breaker_id {breaker_id}"
+            )
         seen.add(breaker_id)
         breakers.append(
             Breaker(
@@ -174,8 +175,8 @@ def _load_observations(
             )
         if row["result"] not in VALID_RESULTS:
             raise InputError(
-                "observations.csv row "
-                f"{row_number}: result must be lost_power, retained_power, or not_tested"
+                f"observations.csv row {row_number}: result must be lost_power, "
+                "retained_power, or not_tested"
             )
         observations.append(
             Observation(
@@ -200,4 +201,3 @@ def _require(
     for field in fields:
         if not row[field]:
             raise InputError(f"{filename} row {row_number}: {field} is required")
-

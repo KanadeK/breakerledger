@@ -26,7 +26,9 @@ def build_parser() -> argparse.ArgumentParser:
     validate = subparsers.add_parser(
         "validate", help="validate the three project CSV files"
     )
-    validate.add_argument("project_dir", help="directory containing the input CSV files")
+    validate.add_argument(
+        "project_dir", help="directory containing the input CSV files"
+    )
 
     audit = subparsers.add_parser(
         "audit", help="validate, compile, and write the five audit reports"

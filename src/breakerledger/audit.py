@@ -2,7 +2,16 @@ from __future__ import annotations
 
 from collections import defaultdict
 
-from .model import Audit, EndpointResult, Observation, Project, RetestAction
+from .model import (
+    Audit,
+    Endpoint,
+    EndpointResult,
+    EndpointStatus,
+    Observation,
+    ObservationResult,
+    Project,
+    RetestAction,
+)
 
 
 def compile_project(project: Project, confirmations: int = 2) -> Audit:
@@ -38,7 +47,9 @@ def compile_project(project: Project, confirmations: int = 2) -> Audit:
         )
 
         if contradictory_breakers or len(positive_breakers) > 1:
-            implicated = tuple(sorted(set(positive_breakers) | set(contradictory_breakers)))
+            implicated = tuple(
+                sorted(set(positive_breakers) | set(contradictory_breakers))
+            )
             reason_parts: list[str] = []
             if contradictory_breakers:
                 reason_parts.append(
@@ -87,13 +98,16 @@ def compile_project(project: Project, confirmations: int = 2) -> Audit:
                 )
             else:
                 needed = confirmations - support_count
+                reason = (
+                    f"{support_count} lost_power observation; {needed} more required"
+                )
                 endpoint_results.append(
                     _endpoint_result(
                         endpoint,
                         "tentative",
                         (breaker_id,),
                         evidence,
-                        f"{support_count} lost_power observation; {needed} more required",
+                        reason,
                     )
                 )
                 retests.append(
@@ -140,13 +154,13 @@ def compile_project(project: Project, confirmations: int = 2) -> Audit:
     return Audit(tuple(endpoint_results), tuple(retests), status_counts)
 
 
-def _has_result(observations: list[Observation], result: str) -> bool:
+def _has_result(observations: list[Observation], result: ObservationResult) -> bool:
     return any(item.result == result for item in observations)
 
 
 def _endpoint_result(
-    endpoint,
-    status,
+    endpoint: Endpoint,
+    status: EndpointStatus,
     breaker_ids: tuple[str, ...],
     evidence: dict[str, list[Observation]],
     reason: str,
@@ -172,4 +186,3 @@ def _endpoint_result(
         negative_observation_ids=tuple(negative_ids),
         reason=reason,
     )
-

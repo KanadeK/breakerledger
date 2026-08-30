@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling==1.27.0"]
+requires = ["hatchling==1.32.0"]
 build-backend = "hatchling.build"
 
 [project]
@@ -34,6 +34,13 @@ classifiers = [
 ]
 dependencies = []
 
+[dependency-groups]
+dev = [
+  "build==1.5.0",
+  "mypy==2.3.1",
+  "ruff==0.16.4",
+]
+
 [project.scripts]
 breakerledger = "breakerledger.cli:main"
 
@@ -46,3 +53,15 @@ packages = ["src/breakerledger"]
 
 [tool.hatch.version]
 path = "src/breakerledger/__init__.py"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests", "scripts"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
