@@ -5,10 +5,11 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from breakerledger.audit import compile_project
 from breakerledger.model import Breaker, Endpoint, Observation, Project
-from breakerledger.reports import REPORT_FILENAMES, write_reports
+from breakerledger.reports import REPORT_FILENAMES, ReportError, write_reports
 
 
 def report_project() -> Project:
@@ -84,7 +85,10 @@ class WriteReportsTests(unittest.TestCase):
     def test_outputs_are_byte_deterministic(self) -> None:
         project = report_project()
         audit = compile_project(project, confirmations=2)
-        with tempfile.TemporaryDirectory() as first_dir, tempfile.TemporaryDirectory() as second_dir:
+        with (
+            tempfile.TemporaryDirectory() as first_dir,
+            tempfile.TemporaryDirectory() as second_dir,
+        ):
             first = Path(first_dir)
             second = Path(second_dir)
 
@@ -106,14 +110,22 @@ class WriteReportsTests(unittest.TestCase):
             write_reports(project, audit, output, confirmations=2)
 
             html = (output / "report.html").read_text(encoding="utf-8")
-            with (output / "mapping.csv").open(
-                encoding="utf-8", newline=""
-            ) as handle:
+            with (output / "mapping.csv").open(encoding="utf-8", newline="") as handle:
                 mapping = list(csv.DictReader(handle))
 
         self.assertNotIn("<script>alert(1)</script>", html)
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html)
         self.assertEqual("'=2+2", mapping[0]["label"])
+
+    def test_refuses_to_follow_a_report_symlink(self) -> None:
+        project = report_project()
+        audit = compile_project(project, confirmations=2)
+        with (
+            tempfile.TemporaryDirectory() as temp_dir,
+            patch("pathlib.Path.is_symlink", return_value=True),
+            self.assertRaisesRegex(ReportError, "refusing to overwrite symbolic link"),
+        ):
+            write_reports(project, audit, temp_dir, confirmations=2)
 
     def test_summary_preserves_evidence_and_retest_actions(self) -> None:
         project = report_project()
@@ -137,4 +149,3 @@ class WriteReportsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

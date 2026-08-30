@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import csv
 import json
+from collections.abc import Iterable, Sequence
 from html import escape
 from io import StringIO
 from pathlib import Path
-from typing import Iterable, Sequence
 
 from .model import Audit, Breaker, EndpointResult, Project
 
@@ -44,6 +44,8 @@ def write_reports(
         paths: list[Path] = []
         for filename in REPORT_FILENAMES:
             path = output / filename
+            if path.is_symlink():
+                raise ReportError(f"refusing to overwrite symbolic link: {path}")
             path.write_text(contents[filename], encoding="utf-8", newline="")
             paths.append(path)
     except OSError as error:
@@ -96,7 +98,9 @@ def _directory_csv(project: Project, audit: Audit) -> str:
     rows: list[tuple[object, ...]] = []
     for breaker in sorted(project.breakers, key=_breaker_key):
         mapped = [
-            result for result in audit.endpoints if breaker.breaker_id in result.breaker_ids
+            result
+            for result in audit.endpoints
+            if breaker.breaker_id in result.breaker_ids
         ]
         rows.append(
             (
@@ -202,7 +206,9 @@ def _report_html(project: Project, audit: Audit, confirmations: int) -> str:
     ]
     directory_rows = []
     for breaker in sorted(project.breakers, key=_breaker_key):
-        mapped = [item for item in audit.endpoints if breaker.breaker_id in item.breaker_ids]
+        mapped = [
+            item for item in audit.endpoints if breaker.breaker_id in item.breaker_ids
+        ]
         directory_rows.append(
             (
                 breaker.panel_id,
@@ -226,8 +232,31 @@ def _report_html(project: Project, audit: Audit, confirmations: int) -> str:
         for item in audit.retests
     ]
     counts = "".join(
-        f'<div class="metric"><strong>{audit.status_counts[status]}</strong>{escape(status)}</div>'
+        '<div class="metric">'
+        f"<strong>{audit.status_counts[status]}</strong>"
+        f"{escape(status)}</div>"
         for status in ("confirmed", "tentative", "unmapped", "conflict")
+    )
+    mapping_table = _html_table(
+        (
+            "Endpoint",
+            "Location",
+            "Kind",
+            "Label",
+            "Status",
+            "Breaker",
+            "Support",
+            "Reason",
+        ),
+        mapping_rows,
+    )
+    directory_table = _html_table(
+        ("Panel", "Position", "Breaker", "Amps", "Label", "Status", "Endpoints"),
+        directory_rows,
+    )
+    retest_table = _html_table(
+        ("Endpoint", "Status", "Breaker", "Action", "Candidates", "Reason"),
+        retest_rows,
     )
     return f"""<!doctype html>
 <html lang="en">
@@ -241,25 +270,36 @@ body {{ margin: 0 auto; max-width: 1200px; padding: 2rem; color: #172033; }}
 h1, h2 {{ color: #0b3a53; }}
 .notice {{ border-left: 5px solid #d97706; background: #fff7ed; padding: 1rem; }}
 .metrics {{ display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.5rem 0; }}
-.metric {{ min-width: 7rem; border: 1px solid #cbd5e1; border-radius: .5rem; padding: .75rem; }}
+.metric {{
+  min-width: 7rem; border: 1px solid #cbd5e1;
+  border-radius: .5rem; padding: .75rem;
+}}
 .metric strong {{ display: block; font-size: 1.6rem; }}
 table {{ border-collapse: collapse; width: 100%; margin-bottom: 2rem; }}
-th, td {{ border: 1px solid #cbd5e1; padding: .5rem; text-align: left; vertical-align: top; }}
+th, td {{
+  border: 1px solid #cbd5e1; padding: .5rem;
+  text-align: left; vertical-align: top;
+}}
 th {{ background: #e8f1f5; }}
-@media print {{ body {{ max-width: none; padding: .5rem; }} table {{ break-inside: auto; }} tr {{ break-inside: avoid; }} }}
+@media print {{
+  body {{ max-width: none; padding: .5rem; }}
+  table {{ break-inside: auto; }} tr {{ break-inside: avoid; }}
+}}
 </style>
 </head>
 <body>
 <h1>BreakerLedger audit</h1>
-<p class="notice"><strong>Documentation only.</strong> This report reflects supplied observations. It is not electrical-safety, code-compliance, or wiring advice.</p>
+<p class="notice"><strong>Documentation only.</strong>
+This report reflects supplied observations. It is not electrical-safety,
+code-compliance, or wiring advice.</p>
 <p>Confirmation threshold: {confirmations} supporting lost-power observations.</p>
 <div class="metrics">{counts}</div>
 <h2>Endpoint mapping</h2>
-{_html_table(("Endpoint", "Location", "Kind", "Label", "Status", "Breaker", "Support", "Reason"), mapping_rows)}
+{mapping_table}
 <h2>Panel directory</h2>
-{_html_table(("Panel", "Position", "Breaker", "Amps", "Label", "Status", "Endpoints"), directory_rows)}
+{directory_table}
 <h2>Retest queue</h2>
-{_html_table(("Endpoint", "Status", "Breaker", "Action", "Candidates", "Reason"), retest_rows)}
+{retest_table}
 </body>
 </html>
 """
