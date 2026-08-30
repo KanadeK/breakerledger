@@ -1,0 +1,16 @@
+observation_id,observed_at,breaker_id,endpoint_id,result,observer,note
+O001,2026-08-30T10:00:00Z,B01,E-LR-NORTH,lost_power,Alex,first pass
+O002,2026-08-30T10:12:00Z,B01,E-LR-NORTH,lost_power,Sam,repeat
+O003,2026-08-30T10:02:00Z,B01,E-LR-LAMP,lost_power,Alex,first pass
+O004,2026-08-30T10:14:00Z,B01,E-LR-LAMP,lost_power,Sam,repeat
+O005,2026-08-30T10:20:00Z,B02,E-KIT-COUNTER,lost_power,Alex,first pass
+O006,2026-08-30T10:31:00Z,B02,E-KIT-COUNTER,lost_power,Sam,repeat
+O007,2026-08-30T10:22:00Z,B02,E-KIT-FRIDGE,lost_power,Alex,first pass
+O008,2026-08-30T10:33:00Z,B02,E-KIT-FRIDGE,lost_power,Sam,repeat
+O009,2026-08-30T10:40:00Z,B03,E-HALL-LIGHT,lost_power,Alex,first pass
+O010,2026-08-30T10:51:00Z,B03,E-HALL-LIGHT,lost_power,Sam,repeat
+O011,2026-08-30T10:05:00Z,B02,E-LR-NORTH,retained_power,Alex,cross-check
+O012,2026-08-30T10:25:00Z,B01,E-KIT-COUNTER,retained_power,Alex,cross-check
+O013,2026-08-30T10:44:00Z,B03,E-KIT-FRIDGE,retained_power,Alex,cross-check
+O014,2026-08-30T11:00:00Z,B04,E-HALL-LIGHT,not_tested,Alex,spare left untouched
+

@@ -1,0 +1,6 @@
+endpoint_id,location,kind,label
+E-BATH-LIGHT,Bathroom,light,Vanity light
+E-BED-OUTLET,Bedroom,receptacle,Desk outlet
+E-GARAGE-OUTLET,Garage,receptacle,Workbench outlet
+E-PORCH-LIGHT,Porch,light,Entry light
+

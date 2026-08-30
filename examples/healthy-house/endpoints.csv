@@ -1,0 +1,7 @@
+endpoint_id,location,kind,label
+E-HALL-LIGHT,Hall,light,Ceiling light
+E-KIT-COUNTER,Kitchen,receptacle,Counter duplex
+E-KIT-FRIDGE,Kitchen,receptacle,Refrigerator outlet
+E-LR-LAMP,Living room,receptacle,Lamp outlet
+E-LR-NORTH,Living room,receptacle,North wall duplex
+

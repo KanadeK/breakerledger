@@ -1,0 +1,6 @@
+panel_id,breaker_id,position,rating_amps,label
+main,B01,1,15,Living room receptacles
+main,B02,2,20,Kitchen small appliance
+main,B03,3,15,Hall lighting
+main,B04,4,,Spare
+

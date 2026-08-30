@@ -19,7 +19,7 @@ shell-command feature.
 | Duplicate IDs or typoed headers silently overwrite evidence. | Exact headers and uniqueness checks fail before compilation. |
 | Observation points at a nonexistent breaker or endpoint. | Referential validation fails before compilation. |
 | A conflict is hidden behind a fallback mapping. | Conflict is a first-class status; no fallback or label authority exists. |
-| Output generation deletes unrelated files. | Create/overwrite only five fixed artifact filenames; never clean the directory recursively. |
+| Output generation deletes unrelated files or follows a planted report symlink. | Create/overwrite only five fixed artifact filenames, reject report symlinks, and never clean the directory recursively. |
 | CSV text is treated as a command or path. | No subprocess, `eval`, dynamic import, URL fetch, or input-derived filename exists. |
 
 ## Residual risk

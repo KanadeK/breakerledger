@@ -1,0 +1,9 @@
+observation_id,observed_at,breaker_id,endpoint_id,result,observer,note
+C001,2026-08-30T13:00:00Z,B01,E-BED-OUTLET,lost_power,Alex,notebook import
+C002,2026-08-30T13:10:00Z,B02,E-BED-OUTLET,lost_power,Sam,conflicts with C001
+C003,2026-08-30T13:20:00Z,B03,E-BATH-LIGHT,lost_power,Alex,first pass
+C004,2026-08-30T13:30:00Z,B03,E-BATH-LIGHT,retained_power,Sam,opposite result
+C005,2026-08-30T13:40:00Z,B04,E-GARAGE-OUTLET,lost_power,Alex,only one observation
+C006,2026-08-30T13:50:00Z,B01,E-PORCH-LIGHT,retained_power,Alex,ruled out B01
+C007,2026-08-30T13:55:00Z,B02,E-PORCH-LIGHT,retained_power,Alex,ruled out B02
+
